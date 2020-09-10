@@ -1,4 +1,4 @@
-﻿namespace CSingleFiler
+﻿namespace CAmalgamator
 {
     using System;
     using System.Collections.Generic;
@@ -9,7 +9,7 @@
     using System.Threading;
     using System.Threading.Tasks;
 
-    public sealed class SingleFiler
+    public sealed class Amalgamator
     {
         private static readonly Regex MainFunctionRegex = new Regex(@"^int main\(", RegexOptions.Multiline);
         private static readonly Regex MainFileHeaderCommentRegex = new Regex(@"^\s*(\/\*(?!\*(?!\/))(?:.|\s)*?\*\/)");
@@ -24,7 +24,7 @@
 
         private readonly bool _printFileNameComments;
 
-        public SingleFiler(bool printFileNameComments = false) => _printFileNameComments = printFileNameComments;
+        public Amalgamator(bool printFileNameComments = false) => _printFileNameComments = printFileNameComments;
 
         public async Task<string> CreateSingleFileSourceAsync(string projectDirectoryPath, CancellationToken cancellationToken = default)
         {

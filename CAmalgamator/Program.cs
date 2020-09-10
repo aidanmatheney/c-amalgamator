@@ -1,4 +1,4 @@
-﻿namespace CSingleFiler
+﻿namespace CAmalgamator
 {
     using System;
     using System.Diagnostics;
@@ -19,8 +19,8 @@
 
             var projectDirectoryPath = args.Length == 1 ? args[0] : Directory.GetCurrentDirectory();
 
-            var singleFiler = new SingleFiler();
-            var singleFileSource = await singleFiler.CreateSingleFileSourceAsync(projectDirectoryPath).ConfigureAwait(false);
+            var amalgamator = new Amalgamator();
+            var singleFileSource = await amalgamator.CreateSingleFileSourceAsync(projectDirectoryPath).ConfigureAwait(false);
             await Console.Out.WriteLineAsync(singleFileSource).ConfigureAwait(false);
 
             return 0;

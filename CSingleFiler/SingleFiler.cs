@@ -12,7 +12,7 @@
     public sealed class SingleFiler
     {
         private static readonly Regex MainFunctionRegex = new Regex(@"^int main\(", RegexOptions.Multiline);
-        private static readonly Regex MainFileHeaderCommentRegex = new Regex(@"^\s*(\/\*(?:.|\s)*?\*\/)");
+        private static readonly Regex MainFileHeaderCommentRegex = new Regex(@"^\s*(\/\*(?!\*(?!\/))(?:.|\s)*?\*\/)");
 
         private static readonly Regex IncludeLocalHeaderRegex = new Regex(@"^#include ""([^""]+)""\r?\n?", RegexOptions.Multiline);
         private static readonly Regex IncludeBuiltInHeaderRegex = new Regex(@"^#include <([^>]+)>\r?\n?", RegexOptions.Multiline);

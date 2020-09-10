@@ -6,6 +6,32 @@
 
     public static class EnumerableExtensions
     {
+        public static IOrderedEnumerable<TSource> OrderByElement<TSource>(this IEnumerable<TSource> source)
+        {
+            Guard.NotNull(source, nameof(source));
+            return source.OrderBy(element => element);
+        }
+
+        public static IOrderedEnumerable<TSource> OrderByElement<TSource>(this IEnumerable<TSource> source, IComparer<TSource> comparer)
+        {
+            Guard.NotNull(source, nameof(source));
+            Guard.NotNull(comparer, nameof(comparer));
+            return source.OrderBy(element => element, comparer);
+        }
+
+        public static IOrderedEnumerable<TSource> OrderByElementDescending<TSource>(this IEnumerable<TSource> source)
+        {
+            Guard.NotNull(source, nameof(source));
+            return source.OrderByDescending(element => element);
+        }
+
+        public static IOrderedEnumerable<TSource> OrderByElementDescending<TSource>(this IEnumerable<TSource> source, IComparer<TSource> comparer)
+        {
+            Guard.NotNull(source, nameof(source));
+            Guard.NotNull(comparer, nameof(comparer));
+            return source.OrderByDescending(element => element, comparer);
+        }
+
         public static IAsyncEnumerable<TSource> AsAsync<TSource>(this IEnumerable<TSource> source)
         {
             Guard.NotNull(source, nameof(source));

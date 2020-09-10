@@ -46,7 +46,7 @@
             var builtInIncludes = await GetBuiltInIncludesAsync(headerFilePaths, implementationFilePaths, cancellationToken).ConfigureAwait(false);
             if (builtInIncludes.Count > 0)
             {
-                foreach (var include in builtInIncludes.OrderBy(include => include))
+                foreach (var include in builtInIncludes.OrderByElement())
                 {
                     singleFileSourceBuilder.AppendFormat("#include <{0}>{1}", include, Environment.NewLine);
                 }

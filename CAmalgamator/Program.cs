@@ -27,7 +27,7 @@
             }
             catch (AmalgamatorException ex)
             {
-                await Console.Error.WriteLineAsync($"Amalgamator error: {ex.Message}");
+                await Console.Error.WriteLineAsync($"Amalgamator error: {ex.Message}").ConfigureAwait(false);
                 return 1;
             }
 

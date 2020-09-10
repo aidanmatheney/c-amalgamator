@@ -32,7 +32,7 @@
 
             var headerFilePaths = GetHeaderFilePaths(projectDirectoryPath);
             var implementationFilePaths = GetImplementationFilePaths(projectDirectoryPath);
-            var mainFilePath = await GetMainFilePathAsync(implementationFilePaths, cancellationToken);
+            var mainFilePath = await GetMainFilePathAsync(implementationFilePaths, cancellationToken).ConfigureAwait(false);
 
             var singleFileSourceBuilder = new StringBuilder();
 
@@ -168,7 +168,7 @@
                 {
                     var dependencyRelativeFilePath = includeLocalHeaderMatch!.Groups[1].Value;
                     var dependencyFilePath = Path.GetFullPath(Path.Combine(directoryPath, dependencyRelativeFilePath));
-                    await AddHeaderAndDependencies(dependencyFilePath);
+                    await AddHeaderAndDependencies(dependencyFilePath).ConfigureAwait(false);
                 }
             }
 

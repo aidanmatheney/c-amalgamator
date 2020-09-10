@@ -2,6 +2,7 @@
 {
     using System;
     using System.Diagnostics;
+    using System.IO;
     using System.Threading.Tasks;
 
     internal static class Program
@@ -10,13 +11,13 @@
         {
             Debug.Assert(!(args is null));
 
-            if (args.Length != 1)
+            if (args.Length > 1)
             {
-                await Console.Error.WriteLineAsync("Project directory path must be specified as the single argument").ConfigureAwait(false);
+                await Console.Error.WriteLineAsync("Optional single argument: project directory path").ConfigureAwait(false);
                 return 1;
             }
 
-            var projectDirectoryPath = args[0];
+            var projectDirectoryPath = args.Length == 1 ? args[0] : Directory.GetCurrentDirectory();
 
             var singleFiler = new SingleFiler();
             var singleFileSource = await singleFiler.CreateSingleFileSourceAsync(projectDirectoryPath).ConfigureAwait(false);

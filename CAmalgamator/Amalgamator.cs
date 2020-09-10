@@ -76,7 +76,7 @@
             var includeDirectoryPath = Path.Combine(projectDirectoryPath, "include");
             if (!Directory.Exists(includeDirectoryPath))
             {
-                throw new Exception($"include directory (\"{includeDirectoryPath}\") not found");
+                throw new AmalgamatorException($"include directory (\"{includeDirectoryPath}\") not found");
             }
 
             var headerFilePaths = Directory.EnumerateFiles(includeDirectoryPath, "*.h", SearchOption.AllDirectories).ToList();
@@ -88,7 +88,7 @@
             var srcDirectoryPath = Path.Combine(projectDirectoryPath, "src");
             if (!Directory.Exists(srcDirectoryPath))
             {
-                throw new Exception($"src directory (\"{srcDirectoryPath}\") not found");
+                throw new AmalgamatorException($"src directory (\"{srcDirectoryPath}\") not found");
             }
 
             var implementationFilePaths = Directory.EnumerateFiles(srcDirectoryPath, "*.c", SearchOption.AllDirectories).ToList();
@@ -115,12 +115,12 @@
 
             if (mainFilePaths.Count == 0)
             {
-                throw new Exception("No main function was found");
+                throw new AmalgamatorException("No main function was found");
             }
 
             if (mainFilePaths.Count > 1)
             {
-                throw new Exception($"Multiple main functions found at the following file paths:{Environment.NewLine}{string.Join(Environment.NewLine, mainFilePaths)}");
+                throw new AmalgamatorException($"Multiple main functions found at the following file paths:{Environment.NewLine}{string.Join(Environment.NewLine, mainFilePaths)}");
             }
 
             return mainFilePaths[0];

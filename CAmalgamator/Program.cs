@@ -20,8 +20,16 @@
             var projectDirectoryPath = args.Length == 1 ? args[0] : Directory.GetCurrentDirectory();
 
             var amalgamator = new Amalgamator();
-            var singleFileSource = await amalgamator.CreateSingleFileSourceAsync(projectDirectoryPath).ConfigureAwait(false);
-            await Console.Out.WriteLineAsync(singleFileSource).ConfigureAwait(false);
+            try
+            {
+                var singleFileSource = await amalgamator.CreateSingleFileSourceAsync(projectDirectoryPath).ConfigureAwait(false);
+                await Console.Out.WriteLineAsync(singleFileSource).ConfigureAwait(false);
+            }
+            catch (AmalgamatorException ex)
+            {
+                await Console.Error.WriteLineAsync($"Amalgamator error: {ex.Message}");
+                return 1;
+            }
 
             return 0;
         }

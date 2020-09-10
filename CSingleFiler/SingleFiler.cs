@@ -50,7 +50,7 @@
             var builtInIncludes = await GetBuiltInIncludesAsync(headerFilePaths, implementationFilePaths, cancellationToken).ConfigureAwait(false);
             if (builtInIncludes.Count > 0)
             {
-                foreach (var include in builtInIncludes)
+                foreach (var include in builtInIncludes.OrderBy(include => include))
                 {
                     singleFileSourceBuilder.AppendFormat("#include <{0}>{1}", include, Environment.NewLine);
                 }
@@ -137,19 +137,24 @@
         private static async Task<IList<string>> GetHeaderOrderAsync(IEnumerable<string> headerFilePaths, CancellationToken cancellationToken)
         {
             var headerOrderWithDuplicates = new Stack<string>();
-            foreach (var filePath in headerFilePaths)
+
+            async Task AddHeaderAndDependencies(string filePath)
             {
-                headerOrderWithDuplicates.Push(filePath);
+                headerOrderWithDuplicates!.Push(filePath);
 
-                var fileDirectoryPath = Path.GetDirectoryName(filePath)!;
-
+                var directoryPath = Path.GetDirectoryName(filePath)!;
                 var source = await File.ReadAllTextAsync(filePath, cancellationToken).ConfigureAwait(false);
                 foreach (Match? includeLocalHeaderMatch in IncludeLocalHeaderRegex.Matches(source))
                 {
-                    var localHeaderRelativePath = includeLocalHeaderMatch!.Groups[1].Value;
-                    var localHeaderAbsolutePath = Path.GetFullPath(Path.Combine(fileDirectoryPath, localHeaderRelativePath));
-                    headerOrderWithDuplicates.Push(localHeaderAbsolutePath);
+                    var dependencyRelativeFilePath = includeLocalHeaderMatch!.Groups[1].Value;
+                    var dependencyFilePath = Path.GetFullPath(Path.Combine(directoryPath, dependencyRelativeFilePath));
+                    await AddHeaderAndDependencies(dependencyFilePath);
                 }
+            }
+
+            foreach (var filePath in headerFilePaths)
+            {
+                await AddHeaderAndDependencies(filePath).ConfigureAwait(false);
             }
 
             var headerOrder = new List<string>();

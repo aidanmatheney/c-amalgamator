@@ -14,8 +14,8 @@
         private static readonly Regex MainFunctionRegex = new Regex(@"^int main\(", RegexOptions.Multiline);
         private static readonly Regex MainFileHeaderCommentRegex = new Regex(@"^\s*(\/\*(?!\*(?!\/))(?:.|\s)*?\*\/)");
 
-        private static readonly Regex IncludeLocalHeaderRegex = new Regex(@"^#include ""([^""]+)""\r?\n?", RegexOptions.Multiline);
         private static readonly Regex IncludeBuiltInHeaderRegex = new Regex(@"^#include <([^>]+)>\r?\n?", RegexOptions.Multiline);
+        private static readonly Regex IncludeLocalHeaderRegex = new Regex(@"^#include ""([^""]+)""\r?\n?", RegexOptions.Multiline);
         private static readonly Regex PragmaRegex = new Regex(@"^#pragma .+\r?\n?", RegexOptions.Multiline);
 
         private static readonly Regex ConsecutiveNewLineRegex = new Regex(@"(?:\r?\n){3,}");
@@ -30,12 +30,8 @@
         {
             Guard.NotNull(projectDirectoryPath, nameof(projectDirectoryPath));
 
-            var includeDirectoryPath = Path.Combine(projectDirectoryPath, "include");
-            var headerFilePaths = Directory.EnumerateFiles(includeDirectoryPath, "*.h", SearchOption.AllDirectories).ToList();
-
-            var srcDirectoryPath = Path.Combine(projectDirectoryPath, "src");
-            var implementationFilePaths = Directory.EnumerateFiles(srcDirectoryPath, "*.c", SearchOption.AllDirectories).ToList();
-
+            var headerFilePaths = GetHeaderFilePaths(projectDirectoryPath);
+            var implementationFilePaths = GetImplementationFilePaths(projectDirectoryPath);
             var mainFilePath = await GetMainFilePathAsync(implementationFilePaths, cancellationToken);
 
             var singleFileSourceBuilder = new StringBuilder();
@@ -73,6 +69,30 @@
 
             var singleFileSource = $"{singleFileSourceBuilder.ToString().Trim()}{Environment.NewLine}";
             return singleFileSource;
+        }
+
+        private static List<string> GetHeaderFilePaths(string projectDirectoryPath)
+        {
+            var includeDirectoryPath = Path.Combine(projectDirectoryPath, "include");
+            if (!Directory.Exists(includeDirectoryPath))
+            {
+                throw new Exception($"include directory (\"{includeDirectoryPath}\") not found");
+            }
+
+            var headerFilePaths = Directory.EnumerateFiles(includeDirectoryPath, "*.h", SearchOption.AllDirectories).ToList();
+            return headerFilePaths;
+        }
+
+        private static List<string> GetImplementationFilePaths(string projectDirectoryPath)
+        {
+            var srcDirectoryPath = Path.Combine(projectDirectoryPath, "src");
+            if (!Directory.Exists(srcDirectoryPath))
+            {
+                throw new Exception($"src directory (\"{srcDirectoryPath}\") not found");
+            }
+
+            var implementationFilePaths = Directory.EnumerateFiles(srcDirectoryPath, "*.c", SearchOption.AllDirectories).ToList();
+            return implementationFilePaths;
         }
 
         private static async Task<string> GetMainFilePathAsync(IEnumerable<string> implementationFilePaths, CancellationToken cancellationToken)

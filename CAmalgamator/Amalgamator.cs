@@ -67,7 +67,7 @@
 
             await AppendSourceFileAsync(singleFileSourceBuilder, mainFilePath, cancellationToken).ConfigureAwait(false);
 
-            var singleFileSource = $"{singleFileSourceBuilder.ToString().Trim()}{Environment.NewLine}";
+            var singleFileSource = $"{RemoveExtraWhitespace(singleFileSourceBuilder.ToString())}{Environment.NewLine}";
             return singleFileSource;
         }
 
@@ -214,6 +214,13 @@
             alteredSource = IncludeLocalHeaderRegex.Replace(alteredSource, string.Empty);
             alteredSource = IncludeBuiltInHeaderRegex.Replace(alteredSource, string.Empty);
             alteredSource = PragmaRegex.Replace(alteredSource, string.Empty);
+
+            return alteredSource;
+        }
+
+        private static string RemoveExtraWhitespace(string source)
+        {
+            var alteredSource = source;
             alteredSource = ConsecutiveNewLineRegex.Replace(alteredSource, $"{Environment.NewLine}{Environment.NewLine}");
             alteredSource = alteredSource.Trim();
 
